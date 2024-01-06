@@ -28,6 +28,6 @@ export const deleteOne = async (tno) => {
 };
 
 export const putOne = async (todo) => {
-    const res = await axios.put(`${prefix}/${todo.tno}`, todo);
+    const res = await axios.put(`${prefix}/`, todo);
     return res.data;
 };
