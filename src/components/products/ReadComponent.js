@@ -5,6 +5,7 @@ import { getOne } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import useCustomCart from "../../hooks/useCustomCart";
 import useCustomLogin from "../../hooks/useCustomLogin";
+import { useQuery } from "@tanstack/react-query";
 
 const initState = {
     pno: 0,
@@ -17,9 +18,15 @@ const initState = {
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ pno }) => {
-    const [product, setProduct] = useState(initState);
     const { moveToList, moveToModify } = useCustomMove();
-    const [fetching, setFetching] = useState(false);
+
+    const { isFetching, data } = useQuery({
+        queryKey: ["products", pno],
+        queryFn: () => getOne(pno),
+        staleTime: 1000 * 10 * 60,
+        retry: 1,
+    });
+
     const { changeCart, cartItems } = useCustomCart();
     const { loginState } = useCustomLogin();
 
@@ -42,18 +49,11 @@ const ReadComponent = ({ pno }) => {
         changeCart({ email: loginState.email, pno: pno, qty: qty });
     };
 
-    useEffect(() => {
-        setFetching(true);
-        getOne(pno).then((data) => {
-            console.log(data);
-            setProduct(data);
-            setFetching(false);
-        });
-    }, [pno]);
+    const product = data || initState;
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-            {fetching ? <FetchingModal /> : <></>}
+            {isFetching ? <FetchingModal /> : <></>}
 
             <div className="flex justify-center mt-10">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
