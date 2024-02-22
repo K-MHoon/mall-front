@@ -5,6 +5,7 @@ import PageComponent from "../common/PageComponent";
 import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomLogin from "../../hooks/useCustomLogin";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const initState = {
     dtoList: [],
@@ -23,24 +24,33 @@ const host = API_SERVER_HOST;
 
 const ListComponent = () => {
     const { page, size, moveToList, moveToRead, refresh } = useCustomMove();
-    const [serverData, setServerData] = useState(initState);
-    const [fetching, setFetching] = useState(false);
-    const { exceptionHandler } = useCustomLogin();
+    const { moveToLoginReturn } = useCustomLogin();
 
-    useEffect(() => {
-        setFetching(true);
-        getList({ page, size })
-            .then((data) => {
-                console.log(data);
-                setServerData(data);
-                setFetching(false);
-            })
-            .catch((err) => exceptionHandler(err));
-    }, [page, size, refresh]);
+    const { isFetching, data, error, isError } = useQuery({
+        queryKey: ["products/list", { page, size, refresh }],
+        queryFn: () => getList({ page, size }),
+        staleTime: 1000 * 5,
+    });
+
+    // const queryClient = useQueryClient();
+
+    const handleClickPage = (pageParam) => {
+        // if (pageParam.page === parseInt(page)) {
+        //     queryClient.invalidateQueries("products/list");
+        // }
+        moveToList(pageParam);
+    };
+
+    if (isError) {
+        console.log(error);
+        return moveToLoginReturn();
+    }
+
+    const serverData = data || initState;
 
     return (
         <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
-            {fetching ? <FetchingModal /> : <></>}
+            {isFetching ? <FetchingModal /> : <></>}
             <div className="flex flex-wrap mx-auto justify-center p-6">
                 {serverData.dtoList.map((product) => (
                     <div
@@ -75,7 +85,7 @@ const ListComponent = () => {
             </div>
             <PageComponent
                 serverData={serverData}
-                movePage={moveToList}
+                movePage={handleClickPage}
             ></PageComponent>
         </div>
     );
