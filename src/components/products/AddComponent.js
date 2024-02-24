@@ -3,6 +3,7 @@ import useCustomMove from "../../hooks/useCustomMove";
 import { postAdd } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import ResultModal from "../common/ResultModal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const initState = {
     pname: "",
@@ -15,8 +16,8 @@ const AddComponent = () => {
     const [product, setProduct] = useState({ ...initState });
     const uploadRef = useRef();
 
-    const [fetching, setFetching] = useState(false);
-    const [result, setResult] = useState(null);
+    // const [fetching, setFetching] = useState(false);
+    // const [result, setResult] = useState(null);
 
     const { moveToList } = useCustomMove();
 
@@ -25,9 +26,13 @@ const AddComponent = () => {
         setProduct({ ...product });
     };
 
-    const handleClickAdd = (e) => {
-        const files = uploadRef.current.files;
+    const addMutation = useMutation({
+        mutationFn: (product) => postAdd(product),
+    });
 
+    const handleClickAdd = (e) => {
+        console.log(product);
+        const files = uploadRef.current.files;
         const formData = new FormData();
 
         for (let i = 0; i < files.length; i++) {
@@ -41,26 +46,30 @@ const AddComponent = () => {
 
         console.log(formData);
 
-        setFetching(true);
+        // setFetching(true);
 
-        postAdd(formData).then((data) => {
-            setFetching(false);
-            setResult(data.result);
-        });
+        // postAdd(formData).then((data) => {
+        //     setFetching(false);
+        //     setResult(data.result);
+        // });
+
+        addMutation.mutate(formData);
     };
 
+    const queryClient = useQueryClient();
+
     const closeModal = () => {
-        setResult(null);
+        queryClient.invalidateQueries("products/list");
         moveToList({ page: 1 });
     };
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-            {fetching ? <FetchingModal /> : <></>}
-            {result ? (
+            {addMutation.isPending ? <FetchingModal /> : <></>}
+            {addMutation.isSuccess ? (
                 <ResultModal
-                    title={"Product And Result"}
-                    content={`${result}번 등록 완료`}
+                    title={"Add Result"}
+                    content={`Add Success ${addMutation.data.result}`}
                     callbackFn={closeModal}
                 />
             ) : (
