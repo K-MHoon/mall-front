@@ -2,26 +2,58 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, createSearchParams, useNavigate } from "react-router-dom";
 import { loginPostAsync, logout } from "../slices/loginSlice";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import signinState from "../atoms/signinState";
+import { loginPost } from "../api/memberApi";
+import { removeCookie, setCookie } from "../util/cookieUtil";
+import cartSlice from "../slices/cartSlice";
+import { cartState } from "../atoms/cartState";
 
 const useCustomLogin = () => {
     const navigate = useNavigate();
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
+    // const loginState = useSelector((state) => state.loginSlice);
 
-    const loginState = useSelector((state) => state.loginSlice);
+    const [loginState, setLoginState] = useRecoilState(signinState);
+
+    const resetState = useResetRecoilState(signinState);
+
+    const resetCartState = useResetRecoilState(cartState);
 
     const isLogin = loginState.email ? true : false;
 
-    const doLogin = async (loginParam) => {
-        // 로그인
-        const action = await dispatch(loginPostAsync(loginParam));
+    // const doLogin = async (loginParam) => {
+    //     // 로그인
+    //     const action = await dispatch(loginPostAsync(loginParam));
 
-        return action.payload;
+    //     return action.payload;
+    // };
+
+    const doLogin = async (loginParam) => {
+        const result = await loginPost(loginParam);
+
+        console.log(result);
+
+        saveAsCookie(result);
+
+        return result;
     };
 
+    const saveAsCookie = (data) => {
+        setCookie("member", JSON.stringify(data), 1);
+        setLoginState(data);
+    };
+
+    // const doLogout = () => {
+    //     // 로그아웃
+    //     dispatch(logout());
+    // };
+
     const doLogout = () => {
-        // 로그아웃
-        dispatch(logout());
+        removeCookie("member");
+        resetState();
+        resetCartState();
     };
 
     const moveToPath = (path) => {
@@ -67,6 +99,7 @@ const useCustomLogin = () => {
         moveToLogin,
         moveToLoginReturn,
         exceptionHandler,
+        saveAsCookie,
     };
 };
 
