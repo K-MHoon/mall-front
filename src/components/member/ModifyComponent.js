@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { modifyMember } from "../../api/memberApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
+import useCustomLogin from "../../hooks/useCustomLogin";
 
 const initState = {
     email: "",
@@ -12,13 +13,14 @@ const initState = {
 
 const ModifyComponent = () => {
     const [member, setMember] = useState(initState);
-    const loginInfo = useSelector((state) => state.loginSlice);
+    // const loginInfo = useSelector((state) => state.loginSlice);
+    const { loginState } = useCustomLogin();
     const [result, setResult] = useState();
     const { moveToLogin } = useCustomMove();
 
     useEffect(() => {
-        setMember({ ...loginInfo, pw: "ABCD" });
-    }, [loginInfo]);
+        setMember({ ...loginState, pw: "ABCD" });
+    }, [loginState]);
 
     const handleChange = (e) => {
         member[e.target.name] = e.target.value;
