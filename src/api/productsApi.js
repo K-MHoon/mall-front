@@ -3,6 +3,9 @@ import jwtAxios from "../util/jwtUtil";
 
 const host = `${API_SERVER_HOST}/api/products`;
 
+export const s3host =
+    "https://elasticbeanstalk-ap-northeast-2-533267216257.s3.ap-northeast-2.amazonaws.com";
+
 export const postAdd = async (product) => {
     const header = { headers: { "Content-Type": "multipart/form-data" } };
 

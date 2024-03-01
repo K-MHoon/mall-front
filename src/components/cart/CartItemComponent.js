@@ -1,5 +1,6 @@
 import React from "react";
 import { API_SERVER_HOST } from "../../api/todoApi";
+import { s3host } from "../../api/productsApi";
 
 const host = API_SERVER_HOST;
 
@@ -21,7 +22,8 @@ const CartItemComponent = ({
         <li key={cino} className="border-2">
             <div className="w-full border-2">
                 <div className="m-1 p-1">
-                    <img src={`${host}/api/products/view/s_${imageFile}`} />
+                    {/* <img src={`${host}/api/products/view/s_${imageFile}`} /> */}
+                    <img src={`${s3host}/${imageFile}`} />
                 </div>
                 <div className="justify-center p-2 text-xl">
                     <div className="justify-end w-full"></div>

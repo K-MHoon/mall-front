@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import FetchingModal from "../common/FetchingModal";
-import { deleteOne, getOne, putOne } from "../../api/productsApi";
+import { deleteOne, getOne, putOne, s3host } from "../../api/productsApi";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
@@ -224,7 +224,8 @@ const ModifyComponent = ({ pno }) => {
                                 </button>
                                 <img
                                     alt="img"
-                                    src={`${host}/api/products/view/s_${imgFile}`}
+                                    // src={`${host}/api/products/view/s_${imgFile}`}
+                                    src={`${s3host}/${imgFile}`}
                                 />
                             </div>
                         ))}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useCustomMove from "../../hooks/useCustomMove";
-import { getList } from "../../api/productsApi";
+import { getList, s3host } from "../../api/productsApi";
 import PageComponent from "../common/PageComponent";
 import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
@@ -67,7 +67,8 @@ const ListComponent = () => {
                                     <img
                                         alt="product"
                                         className="m-auto rounded-md w-60"
-                                        src={`${host}/api/products/view/s_${product.uploadFileNames[0]}`}
+                                        // src={`${host}/api/products/view/s_${product.uploadFileNames[0]}`}
+                                        src={`${s3host}/s_${product.uploadFileNames[0]}`}
                                     />
                                 </div>
                                 <div className="bottom-0 font-extrabold bg-white">

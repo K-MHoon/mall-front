@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomMove from "../../hooks/useCustomMove";
-import { getOne } from "../../api/productsApi";
+import { getOne, s3host } from "../../api/productsApi";
 import FetchingModal from "../common/FetchingModal";
 import useCustomCart from "../../hooks/useCustomCart";
 import useCustomLogin from "../../hooks/useCustomLogin";
@@ -88,7 +88,8 @@ const ReadComponent = ({ pno }) => {
                         alt="product"
                         key={i}
                         className="p-4 w-1/2"
-                        src={`${host}/api/products/view/${imgFile}`}
+                        // src={`${host}/api/products/view/${imgFile}`}
+                        src={`${s3host}/${imgFile}`}
                     />
                 ))}
             </div>
